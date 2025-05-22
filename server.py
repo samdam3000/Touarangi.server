@@ -1,12 +1,16 @@
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from strike_queue import get_confirmed_strikes
 
 app = Flask(__name__)
 
 @app.route("/strikes/live", methods=["GET"])
 def live_strikes():
-    strikes = get_confirmed_strikes(within_minutes=5)
+    try:
+        minutes = int(request.args.get("minutes", 5))
+    except:
+        minutes = 5
+    strikes = get_confirmed_strikes(within_minutes=minutes)
     return jsonify(strikes)
 
 @app.route("/health", methods=["GET"])
